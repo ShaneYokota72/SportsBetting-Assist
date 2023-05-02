@@ -113,7 +113,6 @@ def analyze(category:str, sorted_data:dict[str, list[int]]) -> list[float]:
     return [slope, y_intercept, r_squared, avg_residual_diff]
 
 def betting_decision():
-    
     print("Not done")
 
 def main():
