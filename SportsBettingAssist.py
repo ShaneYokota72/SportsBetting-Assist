@@ -45,9 +45,9 @@ def get_betting_category(all_stats:dict[str, list[int]]) -> str:
         print(f"\t{count}) {i}")
         count += 1
 
-    choice = input("Please select a betting category(e.x.) Rebounds): ")
+    choice = input("\nPlease select a betting category(e.x.) Rebounds): ")
     while choice not in all_stats:
-        choice = input("Please select a valid option: ")
+        choice = input("\nPlease select a valid option: ")
 
     return choice
 
@@ -112,23 +112,51 @@ def analyze(category:str, sorted_data:dict[str, list[int]]) -> list[float]:
     # Return the slope, y_intercept, R-squared value, Avg Residual diff
     return [slope, y_intercept, r_squared, avg_residual_diff]
 
-def betting_decision():
-    print("Not done")
+def betting_decision(analysis_data:list[int], threshhold:float) -> None:
+    slope = analysis_data[0]
+    y_intercept = analysis_data[1]
+    r_squared = analysis_data[2]
+    avg_residual_diff = analysis_data[3]
+    
+    # Regression line = y = slope*x + y_intercept
+    # R^2 = r_squared   Avg Res Diff = avg_residual_diff
+    if r_squared < 0.2:
+        # data is too spreaded. An accurate analysis and decision making is not possible
+        print("\tThe data is scattered and the outcome is un predictable. I recommend NOT making a bet.")
+    else :
+        # data is reliable
+        predicted_value = 11*slope + y_intercept
+        if threshhold > predicted_value:
+            if abs(threshhold - predicted_value) > avg_residual_diff:
+                print("\tI STRONGLY recommend to bet that outcome will be less than the threshold")
+            else :
+                print("\tI would bet that outcome will be less than the threshold")
+        else:
+            if abs(threshhold - predicted_value) > avg_residual_diff:
+                print("\tI STRONGLY recommend to bet that outcome will be more than the threshold")
+            else :
+                print("\tI would bet that outcome will be more than the threshold")
 
 def main():
-    player_id = retreive_player_id()
-    game_logs = playergamelog.PlayerGameLog(player_id=player_id, season='2022', season_type_all_star='Regular Season').get_dict()['resultSets'][0]['rowSet']
+    response = "y"
+    while response.lower() == "y":
+        player_id = retreive_player_id()
+        game_logs = playergamelog.PlayerGameLog(player_id=player_id, season='2022', season_type_all_star='Regular Season').get_dict()['resultSets'][0]['rowSet']
 
-    # filter the data to 18:REB, 19:AST, 20:STL, 21:BLK, 22:PTS
-    filtered_data = [[row[18], row[19], row[20], row[21], row[24]] for row in game_logs]
-    # after filtering the data needed, cut the amount of data to the recent 10, then re-organize it for easier understanding
-    print("after organized")
-    past_ten_stats = retrieve_past_ten(filtered_data)
-    organized_stats = find_player_stats(past_ten_stats)
-    print(organized_stats)
-    betting_category = get_betting_category(organized_stats)
-    analysiscomp = analyze(betting_category, organized_stats)
-    print(analysiscomp)
+        # filter the data to 18:REB, 19:AST, 20:STL, 21:BLK, 22:PTS
+        filtered_data = [[row[18], row[19], row[20], row[21], row[24]] for row in game_logs]
+        # after filtering the data needed, cut the amount of data to the recent 10, then re-organize it for easier understanding
+        print("after organized")
+        past_ten_stats = retrieve_past_ten(filtered_data)
+        organized_stats = find_player_stats(past_ten_stats)
+        print(organized_stats)
+        betting_category = get_betting_category(organized_stats)
+        analysiscomp = analyze(betting_category, organized_stats)
+        print(analysiscomp)
+        threshold = float(input("\nWhat is the betting threshold?(e.x.) 3.5, 23, 25.5): "))
+        betting_decision(analysiscomp, threshold)
+        response = input("\nDo you want to continue (enter y or n)?").strip().lower()
 
+    input("\nThank you for using the sports betting assist!")
 if __name__ == "__main__":
     main()
