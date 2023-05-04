@@ -1,8 +1,72 @@
 from nba_api.stats.endpoints import playergamelog
 from nba_api.stats.static import players
 
-def retreive_player_id() -> int:
+def login() -> bool:
+    """
+        This function will return a boolean value of True if the user has logged in successfully. If the user fails to log in, it will return a boolean value of False.
+    """
 
+    # Initialize the username and password
+    username = ""
+    password = ""
+
+    # get all the usernames and passwords from the file 'usercredentials.txt' and store them in a dictionary
+    user_pw = {}
+    f = open("usercredentials.txt", "r")
+    for line in f:
+        line = line.strip().split(' ')
+        user_pw[line[0]] = line[1]
+
+    # Get the user's input
+    user = input("Username: ")
+    passw = input("Password: ")
+
+    # check if the user and passw is in the file
+    # if credential is not correct, ask until they successfully login
+    while user not in user_pw or user_pw[user] != passw:
+        print("Username or password is incorrect. Please try again.\n")
+        user = input("Username: ")
+        passw = input("Password: ")
+    
+    print(f"\nLogin successful!\nWelcome to sports betting assist {user}!\n")
+    return True
+
+def singup() -> None:
+    """
+        This function will get the user's input of username and password and store them in the file 'usercredentials.txt'. The username and password will be separated by a space.
+    """
+    
+    # Get the user's input
+    user = input("Username: ")
+    passw = input("Password: ")
+    passwcheck = input("Please re-enter your password: ")
+
+    # Get all the usernames and passwords from the file 'usercredentials.txt' and store them in a dictionary
+    user_pw = {}
+    f = open("usercredentials.txt", "r")
+    for line in f:
+        line = line.strip().split(' ')
+        user_pw[line[0]] = line[1]
+    f.close()
+
+    # Store the user's input in the file if it is valid
+    while user in user_pw or passw != passwcheck:
+        if user in f:
+            user = input("Username already exists. Please try another username: ")
+        elif passw != passwcheck:
+            passw = input("Passwords did not match. Please try again: ")
+            passwcheck = input("Please re-enter your password: ")
+
+    # add the user's input(username and password) to the file
+    f = open("usercredentials.txt", "a")
+    f.write(f"{user} {passw}\n")
+    f.close()
+
+    # Lead them to the login page
+    print("\nLOGIN")
+    login()
+
+def retreive_player_id() -> int:
     """ 
         This function will return the player id given the player name. The player name will be given by the user. The player id will be used to get the past ten games data from the API.
     """
@@ -22,7 +86,6 @@ def retreive_player_id() -> int:
     return player['id']
 
 def retrieve_past_ten(stats:list[list[int]]) -> list[list[int]]:
-
     """ 
         This function will return the past ten games data in the raw form from the API/web scraping. The data will be in the form of a list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the order of [rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
     """
@@ -168,6 +231,12 @@ def main():
     """
         This function will be the main function of the program. It will call all the other functions and run the program.
     """
+    # login/signup as a user
+    option = int(input("1) Login\n2) Sign Up\n\nPlease select an option: "))
+    if option == 1:
+        login()
+    else:
+        singup()
 
     # keep running the sports betting assist until the user wants to stop
     response = "y"
