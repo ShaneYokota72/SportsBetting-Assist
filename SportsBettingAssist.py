@@ -2,9 +2,16 @@ from nba_api.stats.endpoints import playergamelog
 from nba_api.stats.static import players
 
 def retreive_player_id() -> int:
+
+    """ 
+        This function will return the player id given the player name. The player name will be given by the user. The player id will be used to get the past ten games data from the API.
+    """
+
+    # Initialize player and player_dict(API data)
     player = None
     player_dict = players.get_players()
 
+    # Get the player id
     while player is None:
         try:
             player_name = input("what is the name of the player? (Please capitalize the Initials of the name): ")
@@ -15,6 +22,12 @@ def retreive_player_id() -> int:
     return player['id']
 
 def retrieve_past_ten(stats:list[list[int]]) -> list[list[int]]:
+
+    """ 
+        This function will return the past ten games data in the raw form from the API/web scraping. The data will be in the form of a list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the order of [rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
+    """
+    
+    # if the stats is more than 10, cut it to 10, thenreturn the stats
     if len(stats)>10:
         return stats[:10]
     return stats
@@ -23,8 +36,10 @@ def find_player_stats(past_ten_data:list[list[int]]) -> dict[str, list[int]]:
     """
         This function will get a dictionary with the key of statistics category and value of statistics list given the past ten games data in the raw form from the API/web scraping. After getting the raw form data, it should return something like {'Rebounds': [10, 8, 1, 3, 10, 6, 5, 9, 2, 4], 'Assist': [1, 1, 0, 1, 0, 2, 1, 1, 0, 0], 'Steal': [2, 2, 1, 1, 0, 0, 1, 2, 0, 0], 'Blocks': [5, 0, 0, 1, 0, 1, 1, 1, 0, 0], 'Points': [17, 10, 2, 2, 8, 11, 5, 16, 2, 2]}
     """
-    #most recent stats is the first index
+
+    # most recent stats is the first index
     stats_sorted = {'Rebounds':[], 'Assist':[], 'Steal':[], 'Blocks':[], 'Points':[]}
+    # organize the raw form of data into a categorized dictionary
     for i in past_ten_data:
         stats_sorted['Rebounds'].append(i[0])
         stats_sorted['Assist'].append(i[1])
@@ -39,12 +54,14 @@ def get_betting_category(all_stats:dict[str, list[int]]) -> str:
         This function will return the betting category the user decides to pursue. After getting the dictionary of k:statistic category(ex, points, rebounds, etc) and v:list of past statistics(ex. 20,23,23,20,18), it will print out all the options for the user, and obtain which category the user wants to make a bet on.
     """
 
+    # Print out all the options for the user
     print("Category Options")
     count = 1
     for i in all_stats:
         print(f"\t{count}) {i}")
         count += 1
 
+    # Get the user's choice
     choice = input("\nPlease select a betting category(e.x.) Rebounds): ")
     while choice not in all_stats:
         choice = input("\nPlease select a valid option: ")
@@ -104,20 +121,22 @@ def analyze(category:str, sorted_data:dict[str, list[int]]) -> list[float]:
 
     # Calculate the avg redisual difference
     avg_residual_diff = sum(residuals)/ len(residuals)
-
-    # Print the equation of the regression line and the R-squared value
-    # print(f"Regression line equation: y = {slope:.2f}x + {y_intercept:.2f}")
-    # print(f"R-squared value: {r_squared:.2f}")
     
     # Return the slope, y_intercept, R-squared value, Avg Residual diff
     return [slope, y_intercept, r_squared, avg_residual_diff]
 
 def betting_decision(analysis_data:list[int], threshhold:float) -> None:
+
+    """ 
+        This function will print out the betting decision based on the analysis data. The analysis data will be a list of slope, y_intercept, R-squared value, Avg Residual diff. The threshold will be the value the user wants to bet on.
+    """
+
+    # Get the analysis data
     slope = analysis_data[0]
     y_intercept = analysis_data[1]
     r_squared = analysis_data[2]
     avg_residual_diff = analysis_data[3]
-    
+
     # Regression line = y = slope*x + y_intercept
     # R^2 = r_squared   Avg Res Diff = avg_residual_diff
     if r_squared < 0.2:
@@ -126,18 +145,31 @@ def betting_decision(analysis_data:list[int], threshhold:float) -> None:
     else :
         # data is reliable
         predicted_value = 11*slope + y_intercept
+        
+        # threshold is above the predicted value, so suggest to bet that outcome will be less than the threshold 
         if threshhold > predicted_value:
+            # very confident
             if abs(threshhold - predicted_value) > avg_residual_diff:
                 print("\tI STRONGLY recommend to bet that outcome will be less than the threshold")
+            # normal confidence
             else :
                 print("\tI would bet that outcome will be less than the threshold")
+        # threshold is below the predicted value, so suggest to bet that outcome will be more than the threshold 
         else:
+            # very confident
             if abs(threshhold - predicted_value) > avg_residual_diff:
                 print("\tI STRONGLY recommend to bet that outcome will be more than the threshold")
+            # normal confidence
             else :
                 print("\tI would bet that outcome will be more than the threshold")
 
 def main():
+
+    """
+        This function will be the main function of the program. It will call all the other functions and run the program.
+    """
+
+    # keep running the sports betting assist until the user wants to stop
     response = "y"
     while response.lower() == "y":
         player_id = retreive_player_id()
@@ -158,5 +190,6 @@ def main():
         response = input("\nDo you want to continue (enter y or n)?").strip().lower()
 
     input("\nThank you for using the sports betting assist!")
+
 if __name__ == "__main__":
     main()
