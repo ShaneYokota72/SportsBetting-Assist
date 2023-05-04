@@ -59,7 +59,7 @@ class PlayerStats:
         
         return stats_sorted
 
-def login() -> bool:
+def login() -> None:
     """
         This function will return a boolean value of True if the user has logged in successfully. If the user fails to log in, it will return a boolean value of False.
     """
@@ -86,8 +86,8 @@ def login() -> bool:
         user = input("Username: ")
         passw = input("Password: ")
     
+    # print login successful message
     print(f"\nLogin successful!\nWelcome to sports betting assist {user}!")
-    return True
 
 def singup() -> None:
     """
@@ -172,6 +172,10 @@ def analyze(category:str, sorted_data:dict[str, list[int]]) -> list[float]:
     datalist = sorted_data[category]
     datalist.reverse()
     y = datalist
+
+    # In case theres no data(ex) havent played in a long time)
+    if len(y)<1:
+        return [0,0,0,0]
 
     # Calculate the mean of x and y
     mean_x = sum(x) / len(x)
@@ -263,10 +267,10 @@ def main():
     """
 
     # login/signup as a user
-    option = int(input("1) Login\n2) Sign Up\n\nPlease select an option: "))
-    if option == 1:
+    option = input("1) Login\n2) Sign Up\n\nPlease select an option: ")
+    if option == "1" or option == "Login":
         login()
-    else:
+    elif option == "2" or option == "Sign Up":
         singup()
 
     # keep running the sports betting assist until the user wants to stop
