@@ -1,6 +1,64 @@
 from nba_api.stats.endpoints import playergamelog
 from nba_api.stats.static import players
 
+class PlayerStats:
+    """
+        This class will get the player's statistics of the past ten games. The statistics will be in the form of a list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the order of [rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
+    """
+
+    def __init__(self, player_id:int) -> None:
+        """
+            This function will initialize the player id and the past ten games statistics. The player id will be used to get the past ten games data from the API. The past ten games statistics will be in the form of a list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the order of [rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
+        """
+
+        # Initialize the player id and the past ten games statistics
+        self.player_id = player_id
+        self.past_ten_stats = []
+        # Get the past ten games statistics
+        self.get_past_ten_stats()
+
+    def get_past_ten_stats(self) -> None:
+        """
+            This function will get the past ten games statistics from the API. The statistics will be in the form of a list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the order of [rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
+        """
+
+        # Initialize the player game log
+        player_game_log = playergamelog.PlayerGameLog(player_id=self.player_id, season='2022', season_type_all_star='Regular Season').get_dict()['resultSets'][0]['rowSet']
+
+        # filter the data to 18:REB, 19:AST, 20:STL, 21:BLK, 22:PTS
+        filtered_data = [[row[18], row[19], row[20], row[21], row[24]] for row in player_game_log]
+
+        # after filtering the data needed, cut the amount of data to the recent 10, then re-organize it for easier understanding
+        past_ten_stats_raw = self.retrieve_past_ten(filtered_data)
+        self.past_ten_stats = self.find_player_stats(past_ten_stats_raw)
+
+    def retrieve_past_ten(self, stats:list[list[int]]) -> list[list[int]]:
+        """ 
+            This function will return the past ten games data in the raw form from the API/web scraping. The data will be in the form of a list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the order of [rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
+        """
+    
+        # if the stats is more than 10, cut it to 10, thenreturn the stats
+        if len(stats)>10:
+            return stats[:10]
+        return stats
+
+    def find_player_stats(self, past_ten_data:list[list[int]]) -> dict[str, list[int]]:
+        """
+            This function will get a dictionary with the key of statistics category and value of statistics list given the past ten games data in the raw form from the API/web scraping. After getting the raw form data, it should return something like {'Rebounds': [10, 8, 1, 3, 10, 6, 5, 9, 2, 4], 'Assist': [1, 1, 0, 1, 0, 2, 1, 1, 0, 0], 'Steal': [2, 2, 1, 1, 0, 0, 1, 2, 0, 0], 'Blocks': [5, 0, 0, 1, 0, 1, 1, 1, 0, 0], 'Points': [17, 10, 2, 2, 8, 11, 5, 16, 2, 2]}
+        """
+
+        # most recent stats is the first index
+        stats_sorted = {'Rebounds':[], 'Assist':[], 'Steal':[], 'Blocks':[], 'Points':[]}
+        # organize the raw form of data into a categorized dictionary
+        for i in past_ten_data:
+            stats_sorted['Rebounds'].append(i[0])
+            stats_sorted['Assist'].append(i[1])
+            stats_sorted['Steal'].append(i[2])
+            stats_sorted['Blocks'].append(i[3])
+            stats_sorted['Points'].append(i[4])
+        
+        return stats_sorted
+
 def login() -> bool:
     """
         This function will return a boolean value of True if the user has logged in successfully. If the user fails to log in, it will return a boolean value of False.
@@ -28,7 +86,7 @@ def login() -> bool:
         user = input("Username: ")
         passw = input("Password: ")
     
-    print(f"\nLogin successful!\nWelcome to sports betting assist {user}!\n")
+    print(f"\nLogin successful!\nWelcome to sports betting assist {user}!")
     return True
 
 def singup() -> None:
@@ -78,39 +136,12 @@ def retreive_player_id() -> int:
     # Get the player id
     while player is None:
         try:
-            player_name = input("what is the name of the player? (Please capitalize the Initials of the name): ")
+            player_name = input("\nWhat is the name of the player? (Please capitalize the Initials of the name): ")
             player = [player for player in player_dict if player['full_name'] == player_name][0]
         except:
             print("The player name is not valid. Please try again")
     
     return player['id']
-
-def retrieve_past_ten(stats:list[list[int]]) -> list[list[int]]:
-    """ 
-        This function will return the past ten games data in the raw form from the API/web scraping. The data will be in the form of a list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the order of [rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
-    """
-    
-    # if the stats is more than 10, cut it to 10, thenreturn the stats
-    if len(stats)>10:
-        return stats[:10]
-    return stats
-
-def find_player_stats(past_ten_data:list[list[int]]) -> dict[str, list[int]]:
-    """
-        This function will get a dictionary with the key of statistics category and value of statistics list given the past ten games data in the raw form from the API/web scraping. After getting the raw form data, it should return something like {'Rebounds': [10, 8, 1, 3, 10, 6, 5, 9, 2, 4], 'Assist': [1, 1, 0, 1, 0, 2, 1, 1, 0, 0], 'Steal': [2, 2, 1, 1, 0, 0, 1, 2, 0, 0], 'Blocks': [5, 0, 0, 1, 0, 1, 1, 1, 0, 0], 'Points': [17, 10, 2, 2, 8, 11, 5, 16, 2, 2]}
-    """
-
-    # most recent stats is the first index
-    stats_sorted = {'Rebounds':[], 'Assist':[], 'Steal':[], 'Blocks':[], 'Points':[]}
-    # organize the raw form of data into a categorized dictionary
-    for i in past_ten_data:
-        stats_sorted['Rebounds'].append(i[0])
-        stats_sorted['Assist'].append(i[1])
-        stats_sorted['Steal'].append(i[2])
-        stats_sorted['Blocks'].append(i[3])
-        stats_sorted['Points'].append(i[4])
-    
-    return stats_sorted
 
 def get_betting_category(all_stats:dict[str, list[int]]) -> str:
     """
@@ -227,10 +258,10 @@ def betting_decision(analysis_data:list[int], threshhold:float) -> None:
                 print("\tI would bet that outcome will be more than the threshold")
 
 def main():
-
     """
         This function will be the main function of the program. It will call all the other functions and run the program.
     """
+
     # login/signup as a user
     option = int(input("1) Login\n2) Sign Up\n\nPlease select an option: "))
     if option == 1:
@@ -242,18 +273,10 @@ def main():
     response = "y"
     while response.lower() == "y":
         player_id = retreive_player_id()
-        game_logs = playergamelog.PlayerGameLog(player_id=player_id, season='2022', season_type_all_star='Regular Season').get_dict()['resultSets'][0]['rowSet']
-
-        # filter the data to 18:REB, 19:AST, 20:STL, 21:BLK, 22:PTS
-        filtered_data = [[row[18], row[19], row[20], row[21], row[24]] for row in game_logs]
-        # after filtering the data needed, cut the amount of data to the recent 10, then re-organize it for easier understanding
-        print("after organized")
-        past_ten_stats = retrieve_past_ten(filtered_data)
-        organized_stats = find_player_stats(past_ten_stats)
-        print(organized_stats)
-        betting_category = get_betting_category(organized_stats)
-        analysiscomp = analyze(betting_category, organized_stats)
-        print(analysiscomp)
+        Target_Player_Stats = PlayerStats(player_id)
+        betting_category = get_betting_category(Target_Player_Stats.past_ten_stats)
+        analysiscomp = analyze(betting_category, Target_Player_Stats.past_ten_stats)
+        # print(analysiscomp)
         threshold = float(input("\nWhat is the betting threshold?(e.x.) 3.5, 23, 25.5): "))
         betting_decision(analysiscomp, threshold)
         response = input("\nDo you want to continue (enter y or n)?").strip().lower()
