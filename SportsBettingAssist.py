@@ -239,7 +239,7 @@ def betting_decision(analysis_data:list[int], threshhold:float) -> None:
     # R^2 = r_squared   Avg Res Diff = avg_residual_diff
     if r_squared < 0.2:
         # data is too spreaded. An accurate analysis and decision making is not possible
-        print("\tThe data is scattered and the outcome is un predictable. I recommend NOT making a bet.")
+        print("\tThe data is scattered and the outcome is unpredictable. I recommend NOT making a bet.")
     else :
         # data is reliable
         predicted_value = 11*slope + y_intercept
@@ -281,7 +281,7 @@ def main():
         betting_category = get_betting_category(Target_Player_Stats.past_ten_stats)
         analysiscomp = analyze(betting_category, Target_Player_Stats.past_ten_stats)
         # print(analysiscomp)
-        threshold = float(input("\nWhat is the betting threshold?(e.x.) 3.5, 23, 25.5): "))
+        threshold = float(input("\nWhat is the betting threshold?(e.x: 3.5, 23, 25.5): "))
         betting_decision(analysiscomp, threshold)
         response = input("\nDo you want to continue (enter y or n)?").strip().lower()
 
