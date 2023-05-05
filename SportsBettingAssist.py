@@ -291,7 +291,7 @@ def main():
         threshold = None
         while threshold == None:
             try:
-                threshold = float(input("\nWhat is the betting threshold?(e.x: 3.5, 23, 25.5): "))
+                threshold = float(input("\nWhat is the betting threshold?(e.x.: 3.5, 23, 25.5): "))
                 break
             except:
                 print("\nPlease enter a valid number")
