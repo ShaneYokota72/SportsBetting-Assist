@@ -156,7 +156,7 @@ def get_betting_category(all_stats:dict[str, list[int]]) -> str:
         count += 1
 
     # Get the user's choice
-    choice = input("\nPlease select a betting category(e.x.) Rebounds): ")
+    choice = input("\nPlease select a betting category(e.x.: Rebounds): ")
     while choice not in all_stats:
         choice = input("\nPlease select a valid option: ")
 
@@ -276,13 +276,27 @@ def main():
     # keep running the sports betting assist until the user wants to stop
     response = "y"
     while response.lower() == "y":
+        # get the player id
         player_id = retreive_player_id()
+
+        # make the PlayerStats object
         Target_Player_Stats = PlayerStats(player_id)
         betting_category = get_betting_category(Target_Player_Stats.past_ten_stats)
         analysiscomp = analyze(betting_category, Target_Player_Stats.past_ten_stats)
-        # print(analysiscomp)
-        threshold = float(input("\nWhat is the betting threshold?(e.x: 3.5, 23, 25.5): "))
+        
+        # get the betting threshold
+        threshold = None
+        while threshold == None:
+            try:
+                threshold = float(input("\nWhat is the betting threshold?(e.x: 3.5, 23, 25.5): "))
+                break
+            except:
+                print("\nPlease enter a valid number")
+        
+        # print out the betting decision
         betting_decision(analysiscomp, threshold)
+        
+        # ask the user if they want to continue
         response = input("\nDo you want to continue (enter y or n)?").strip().lower()
 
     input("\nThank you for using the sports betting assist!")

@@ -18,9 +18,13 @@ SportsBetting Assist was built using Python and the following libraries:
 
 * `nba_api`: Used to send HTTP requests to the API and retrieve data.
 
-`nba_api` is an API Client for `www.nba.com`. nba_api requires `Python 3.7+` along with the requests and numpy packages. 
+`nba_api` is an API Client for `www.nba.com`. nba_api requires `Python 3.11+` along with the requests and numpy packages. 
 ```
 pip install nba_api
+```
+or
+```
+pip3 install nba_api
 ```
 
 ## Contribution Guidelines
