@@ -136,7 +136,7 @@ def retreive_player_id() -> int:
     # Get the player id
     while player is None:
         try:
-            player_name = input("\nWhat is the name of the player? (Please capitalize the Initials of the name): ")
+            player_name = input("\nWhat is the name of the NBA player? (Please capitalize the Initials of the name): ")
             player = [player for player in player_dict if player['full_name'] == player_name][0]
         except:
             print("The player name is not valid. Please try again")
