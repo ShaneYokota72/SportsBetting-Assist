@@ -266,8 +266,11 @@ def main():
         This function will be the main function of the program. It will call all the other functions and run the program.
     """
 
-    # login/signup as a user
-    option = input("1) Login\n2) Sign Up\n\nPlease select an option: ")
+    # login/signup as a user and make sure the option is valid
+    option = ""
+    while option != "1" and option != "Login" and option != "2" and option != "Sign Up":
+        option = input("1) Login\n2) Sign Up\n\nPlease select an option: ")
+    
     if option == "1" or option == "Login":
         login()
     elif option == "2" or option == "Sign Up":
@@ -295,7 +298,7 @@ def main():
         
         # print out the betting decision
         betting_decision(analysiscomp, threshold)
-        
+
         # ask the user if they want to continue
         response = input("\nDo you want to continue (enter y or n)?").strip().lower()
 
