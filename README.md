@@ -1,3 +1,4 @@
+![GitHub repo size](https://img.shields.io/github/repo-size/ShaneYokota72/SportsBetting-Assist)
 # SportsBetting Assist
 
 SportsBetting Assist is a Python project designed to provide sports bettors with data-driven insights that can help them make more informed betting decisions. By leveraging data from an online API, the program calculates a linear regression line and an r^2 value for a given player's performance in various categories such as points, rebounds, and steals. Based on this information, users can determine whether they should place a bet above, below, or not at all.
