@@ -42,7 +42,7 @@ class PlayerStats:
         # understanding
         past_ten_stats_raw = retrieve_past_ten(filtered_data)
         self.past_ten_stats = find_player_stats(past_ten_stats_raw)
-        
+
 
 def retrieve_past_ten(stats: list[list[int]]) -> list[list[int]]:
     """
