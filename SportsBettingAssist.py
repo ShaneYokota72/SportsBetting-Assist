@@ -8,7 +8,7 @@ class PlayerStats:
     rebounds, assist, steal, blocks, points]. The most recent game will be the first index of the list.
     """
 
-    def __init__(self, player_id: int) -> None:
+    def __init__(self, player_id: int, season: str) -> None:
         """
         This function will initialize the player id and the past ten games statistics. The player id will be used to
         get the past ten games data from the API. The past ten games statistics will be in the form of a list of
@@ -20,9 +20,9 @@ class PlayerStats:
         self.player_id = player_id
         self.past_ten_stats = []
         # Get the past ten games statistics
-        self.get_past_ten_stats()
+        self.get_past_ten_stats(season)
 
-    def get_past_ten_stats(self) -> None:
+    def get_past_ten_stats(self, season:str) -> None:
         """
         This function will get the past ten games statistics from the API. The statistics will be in the form of a
         list of lists. Each list will contain the statistics of the past ten games. The statistics will be in the
@@ -31,9 +31,10 @@ class PlayerStats:
 
         # Initialize the player game log
         player_game_log = playergamelog.PlayerGameLog(player_id=self.player_id, season='2022',
-                                                      season_type_all_star='Regular Season').get_dict()['resultSets'][
+                                                      season_type_all_star= season).get_dict()['resultSets'][
             0]['rowSet']
-
+        # (Regular Season)|(Pre Season)|(Playoffs)|(All-Star)|(All Star)    
+         
         # filter the data to 18:REB, 19:AST, 20:STL, 21:BLK, 22:PTS
         filtered_data = [[row[18], row[19], row[20], row[21], row[24]] for row in player_game_log]
 
@@ -41,76 +42,7 @@ class PlayerStats:
         # understanding
         past_ten_stats_raw = retrieve_past_ten(filtered_data)
         self.past_ten_stats = find_player_stats(past_ten_stats_raw)
-
-
-def login() -> None:
-    """
-    This function will return a boolean value of True if the user has logged in successfully. If the user fails to
-    log in, it will return a boolean value of False.
-    """
-
-    # Initialize the username and password
-    username = ""
-    password = ""
-
-    # get all the usernames and passwords from the file 'usercredentials.txt' and store them in a dictionary
-    user_pw = {}
-    f = open("usercredentials.txt", "r")
-    for line in f:
-        line = line.strip().split(' ')
-        user_pw[line[0]] = line[1]
-
-    # Get the user's input
-    user = input("Username: ")
-    passw = input("Password: ")
-
-    # check if the user and passw is in the file
-    # if credential is not correct, ask until they successfully login
-    while user not in user_pw or user_pw[user] != passw:
-        print("Username or password is incorrect. Please try again.\n")
-        user = input("Username: ")
-        passw = input("Password: ")
-
-    # print login successful message
-    print(f"\nLogin successful!\nWelcome to sports betting assist {user}!")
-
-
-def singup() -> None:
-    """
-    This function will get the user's input of username and password and store them in the file
-    'usercredentials.txt'. The username and password will be separated by a space.
-    """
-
-    # Get the user's input
-    user = input("Username: ")
-    passw = input("Password: ")
-    passwcheck = input("Please re-enter your password: ")
-
-    # Get all the usernames and passwords from the file 'usercredentials.txt' and store them in a dictionary
-    user_pw = {}
-    f = open("usercredentials.txt", "r")
-    for line in f:
-        line = line.strip().split(' ')
-        user_pw[line[0]] = line[1]
-    f.close()
-
-    # Store the user's input in the file if it is valid
-    while user in user_pw or passw != passwcheck:
-        if user in f:
-            user = input("Username already exists. Please try another username: ")
-        elif passw != passwcheck:
-            passw = input("Passwords did not match. Please try again: ")
-            passwcheck = input("Please re-enter your password: ")
-
-    # add the user's input(username and password) to the file
-    f = open("usercredentials.txt", "a")
-    f.write(f"{user} {passw}\n")
-    f.close()
-
-    # Lead them to the login page
-    print("\nLOGIN")
-    login()
-
+        
 
 def retrieve_past_ten(stats: list[list[int]]) -> list[list[int]]:
     """
@@ -299,24 +231,19 @@ def main():
     This function will be the main function of the program. It will call all the other functions and run the program.
     """
 
-    # login/signup as a user and make sure the option is valid
-    option = ""
-    while option != "1" and option != "Login" and option != "2" and option != "Sign Up":
-        option = input("1) Login\n2) Sign Up\n\nPlease select an option: ")
-
-    if option == "1" or option == "Login":
-        login()
-    elif option == "2" or option == "Sign Up":
-        singup()
-
     # keep running the sports betting assist until the user wants to stop
     response = "y"
     while response.lower() == "y":
         # get the player id
+        season = input("What season is NBA currently in?(e.x.: (Regular Season)|(Pre Season)|(Playoffs)|(All-Star)|(All Star): ")
+        while season not in ["Regular Season", "Pre Season", "Playoffs", "All-Star", "All Star"]:
+            print("Please provide us a valid season")
+            season = input("What season is NBA currently in?(e.x.: (Regular Season)|(Pre Season)|(Playoffs)|(All-Star)|(All Star): ")
+
         player_id = retreive_player_id()
 
         # make the PlayerStats object
-        Target_Player_Stats = PlayerStats(player_id)
+        Target_Player_Stats = PlayerStats(player_id, season)
         betting_category = get_betting_category(Target_Player_Stats.past_ten_stats)
         analysiscomp = analyze(betting_category, Target_Player_Stats.past_ten_stats)
 
