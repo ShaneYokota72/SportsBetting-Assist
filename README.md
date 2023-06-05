@@ -40,19 +40,19 @@ pip3 install nba-api
 ## Real Data Results
 | Player Name        | Betting Category | Betting Threshold | Betting Date | Program Output     | Actual Outcome | Accuracy |
 |--------------------|------------------|-------------------|--------------|--------------------|----------------|----------|
-| Aaron Gordon       | Steal            | 0.5               | Jun 4th      | Strongly bet on less than threshold     | Less           | O        |
-| Kevin Love         | Rebounds         | 4.0               | Jun 4th      | Scattered - Don't make a bet | More           | O        |
-| Jimmy Butler       | Rebounds         | 6.0               | Jun 4th      | Scattered - Don't make a bet | More           | O        |
-| Michael Porter Jr  | Rebounds         | 8.0               | Jun 4th      | Scattered - Don't make a bet | Less           | O        |
-| Gabe Vincent       | Points           | 13.5              | Jun 4th      | Strongly bet on more than threshold     | More           | O        |
-| Nikola Jokic       | Assist           | 11                | Jun 4th      | Scattered - Don't make a bet | Less           | O        |
-| Nikola Jokic       | Points           | 0.5               | Jun 1st      | Strongly bet on more than threshold     | More           | O        |
-| Jimmy Butler       | Assists          | 6.0               | Jun 1st      | Scattered - Don't make a bet | More           | O        |
-| Jamal Murray       | Points           | 25.5              | Jun 1st      | Strongly bet on more than threshold     | More           | O        |
-| Gabe Vincent       | Points           | 12.5              | Jun 1st      | Scattered - Don't make a bet | More           | O        |
-| Ban Adebayo        | Assists          | 3.5               | Jun 1st      | Scattered - Don't make a bet | More           | O        |
-| Jamal Murray       | Rebounds         | 5.0               | Jun 1st      | Strongly bet on more than threshold     | More           | O        |
-| Caleb Martin       | Rebounds         | 7                 | Jun 1st      | Strongly bet on more than threshold     | Less           | X        |
+| Aaron Gordon       | Steal            | 0.5               | Jun 4th      | Strongly bet on less than threshold     | Less           | ✅        |
+| Kevin Love         | Rebounds         | 4.0               | Jun 4th      | Scattered - Don't make a bet | More           | ✅        |
+| Jimmy Butler       | Rebounds         | 6.0               | Jun 4th      | Scattered - Don't make a bet | More           | ✅        |
+| Michael Porter Jr  | Rebounds         | 8.0               | Jun 4th      | Scattered - Don't make a bet | Less           | ✅        |
+| Gabe Vincent       | Points           | 13.5              | Jun 4th      | Strongly bet on more than threshold     | More           | ✅        |
+| Nikola Jokic       | Assist           | 11                | Jun 4th      | Scattered - Don't make a bet | Less           | ✅        |
+| Nikola Jokic       | Points           | 0.5               | Jun 1st      | Strongly bet on more than threshold     | More           | ✅        |
+| Jimmy Butler       | Assists          | 6.0               | Jun 1st      | Scattered - Don't make a bet | More           | ✅        |
+| Jamal Murray       | Points           | 25.5              | Jun 1st      | Strongly bet on more than threshold     | More           | ✅        |
+| Gabe Vincent       | Points           | 12.5              | Jun 1st      | Scattered - Don't make a bet | More           | ✅        |
+| Ban Adebayo        | Assists          | 3.5               | Jun 1st      | Scattered - Don't make a bet | More           | ✅        |
+| Jamal Murray       | Rebounds         | 5.0               | Jun 1st      | Strongly bet on more than threshold     | More           | ✅        |
+| Caleb Martin       | Rebounds         | 7                 | Jun 1st      | Strongly bet on more than threshold     | Less           | ❌        |
 
 
 
